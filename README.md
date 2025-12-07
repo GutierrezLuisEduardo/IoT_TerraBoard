@@ -137,12 +137,13 @@ Este proyecto sólo se ha probado bajo las siguientes condiciones:
 ### Alistando el entorno:
 1. Descarga el repositorio en tu computadora y accede al directorio del mismo.
 2. Asegúrate de tener instalados y configuradas las versiones especificadas de python, MySQL, ngrok, IDE Arduino, librerías de Adafruit y una versión reciente de Google Chrome.
-3. Crea un virtual environment para instalar las librerías de python necesarias (bajo `requirements.txt`)
+3. Crea un virtual environment para instalar las librerías de python necesarias (bajo `requirements.txt`). SE RECOMIENDA FUERTEMENTE INSTALAR LO ESPECIFICADO DENTRO DEL ARCHIVO, PUES NO SE GARANTIZA QUE OTRAS VERSIONES DE LAS LIBRERÍAS SEAN COMPATIBLES.
 4. Monta un circuito como el de la imagen ![Circuito](./img/image.jpeg)
   - `DHT11` (positivo: `3v3`, tierra: `GND`, señal: `GPIO 21`)
   - `HW-038` (positivo: `3v3`, tierra: `GND`, señal: `GPIO 34` por ser analógico)
 
-  **CONSIDERA QUE ESTAS CONFIGURACIONES FUERON IDEADAS PARA EL MODELO ESPECIFICADO DE `ESP32`, PUEDES CONSULTAR UN DATASHEET Y MODIFICAR LOS PINES EN EL CÓDIGO `Envia_BD_ESP32.ino` SI NECESITAS CAMBIOS.**  
+  **CONSIDERA QUE ESTAS CONFIGURACIONES FUERON IDEADAS PARA EL MODELO ESPECIFICADO DE `ESP32`, PUEDES CONSULTAR UN DATASHEET Y MODIFICAR LOS PINES EN EL CÓDIGO `Envia_BD_ESP32.ino` SI NECESITAS CAMBIOS.** 
+  A continuación, el pinout del modelo utilizado durante las pruebas del proyecto: ![PINOUT DEL ESP32-WROOM-32](https://www.twinschip.com/image/catalog/Products%20Twins%20Chip%20Store%202020/ESP32%20ESP-WROOM-32%20Development%20Board%20/ESP32%20ESP-WROOM-32%20Development%20Board%20%20-%20Twins%20Chip%20D.jpg)
 
 ### Puesta en marcha del servidor:
 1. Una vez que tengas instalado `ngrok`, ejecuta `ngrok http 5000` para exponer tu puerto 5000 y que se te asigne bajo "Forwarding" una URL tunel hacia tu servidor. Copia dicha URL.
