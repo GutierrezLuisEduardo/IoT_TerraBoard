@@ -1,0 +1,220 @@
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f6f7fb;
+    display: flex;
+}
+
+#bt {
+    background: #6b3df2;
+    color: white;
+    font-size: 15px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+    z-index: 9999;
+    /* Establece el botón de actualizar como fijo eb la esq. sup. der. */
+    position: fixed; 
+    top: 0;
+    right: 0; 
+    margin: 16px;
+}
+#bt:hover {
+    background: #9a95ff;
+}
+
+#bt:active {
+
+    background: #f6f7fb;
+    color: #545454;
+}
+
+/* Barra lateral */
+.sidebar {
+    width: 260px;
+    background: white;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid #e5e5e5;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu {
+    margin-top: 30px;
+}
+
+.menu-item {
+    font-size: 15px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #545454;
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: #ecebff;
+}
+
+.menu-item:active {
+    background: #6b3df2;
+    color: white;
+}
+
+.dropdown {
+    position: absolute;
+    bottom: 50px;
+    left: 10px;
+    width: 120px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: none;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.dropdown-item:hover {
+    background: #f2f2f2;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 50px;
+}
+
+h1 {
+    font-size: 42px;
+    margin-bottom: 40px;
+}
+
+.big-box {
+    background: #dcd9d9;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    font-size: 22px;
+}
+
+.section-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+/* Menú desplegable para Dashboard y Aprende de tu mascota */
+.menuDesp {
+    position: relative;
+}
+
+.menuDesp > span {
+    transition: transform 0.2s;
+}
+
+.menuDesp:hover > span {
+    transform: rotate(90deg);
+}
+
+.menuDesp .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.menuDesp:hover .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.submenu-item {
+    padding: 12px 18px;
+    font-size: 14px;
+    color: #545454;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submenu-item:hover {
+    background: #ecebff;
+    color: #6b3df2;
+}
+
+.submenu-item:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.submenu-item:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.menuDesp-trigger {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submenu {
+    display: none;
+    padding-left: 20px;
+    margin-top: 8px;
+}
+
+.submenu.visible {
+    display: block;
+}
+
+.check {
+    margin-left: 10px;
+    color: #4CAF50;
+    font-weight: bold;
+    display: none;
+}
+
+.check.visible {
+    display: inline;
+}
+
+#mascota-actual {
+    font-weight: 500;
+}

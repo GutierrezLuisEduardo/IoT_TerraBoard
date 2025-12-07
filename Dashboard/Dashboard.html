@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - TerraBoard</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    /* Tarjetas superiores */
+    .status-cards {
+        display: flex;
+        gap: 40px;
+        margin-bottom: 50px;
+    }
+
+    .card {
+        width: 220px;
+        background: #dcd9d9;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 17px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .card-value {
+        font-size: 32px;
+        font-weight: 600;
+    }
+
+    .report-section {
+        display: flex;
+        gap: 40px;
+        align-items: stretch;
+    }
+
+    .big-box {
+        width: 60%;
+        height: 350px;
+        background: #f8f8f8;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .big-box img {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .alert-box {
+        width: 250px;
+        background: #dcd9d9;
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 22px;
+        color: #555;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .alert-box .icon {
+        font-size: 60px;
+        color: #666;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+<!-- ===================== SIDEBAR ===================== -->
+<div class="sidebar">
+    <div>   
+        <div class="logo">TerraBoard v0.1</div>
+        <div class="menu">
+            <div class="menu-item" onclick="window.location.href='./Dashboard.html'">Dashboard</div>
+            <div class="menu-item" onclick="window.location.href='./Historia.html'">Historia <span>›</span></div>
+            <div class="menu-item" onclick="window.location.href='./AprendeDeTuMascota.html'">Aprende de tu mascota</div>
+        <div class="menu-item menuDesp" id="mDD">
+            <div class="menuDesp-trigger" onclick="toggleSubmenu()">
+                <span id="mascota-actual">Elige tu mascota</span>
+            </div>
+            <div class="submenu" id="submenu">
+                <div class="submenu-item" onclick="seleccionarMascota('Tarántula')">Tarántula <span class="check" id="check-tarantula">•</span></div>
+                <div class="submenu-item" onclick="seleccionarMascota('Jerbo')">Jerbo <span class="check" id="check-jerbo">•</span></div>
+                <div class="submenu-item" onclick="seleccionarMascota('Dragón Barbudo')">Dragón Barbudo <span class="check" id="check-dragon">•</span></div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== CONTENIDO ===================== -->
+<div class="content">
+
+    <h1>Mediciones en tiempo real</h1>
+
+    <button id="bt" class="DashBoardBT">Actualizar</button>
+
+    <div class="status-cards">
+        <div class="card">
+            <div class="card-title">Temperatura actual</div>
+            <div class="card-value">30ºC</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Humedad actual</div>
+            <div class="card-value">30%</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Nivel de agua</div>
+            <div class="card-value">30%</div>
+        </div>
+    </div>
+
+    <div class="section-title">Reporte diario</div>
+
+    <div class="report-section">
+        <div class="big-box" id="graficaContainer">
+            <p>Presiona "Actualizar" para cargar la gráfica</p>
+            <img id="graficaImg" src="" alt="Gráfica del día" style="display:none;">
+        </div>
+
+        <div class="alert-box" id="estabilidadBox">
+            Estabilidad de la temperatura<br><br>
+            Cargando...
+        </div>
+    </div>
+
+</div>
+
+<script>
+// =============== GESTIÓN DE MASCOTA SELECCIONADA ================
+let mascotaActual = localStorage.getItem('mascotaActual') || null;
+
+// Función para actualizar la interfaz del menú
+function actualizarMenuMascota() {
+    const textoActual = document.getElementById('mascota-actual');
+    const checks = {
+        'Tarántula': document.getElementById('check-tarantula'),
+        'Jerbo': document.getElementById('check-jerbo'),
+        'Dragón Barbudo': document.getElementById('check-dragon')
+    };
+
+    // Quitar indicadores
+    Object.values(checks).forEach(check => {
+        check.classList.remove('visible');
+    });
+
+    if (mascotaActual) {
+        textoActual.textContent = mascotaActual;
+        if (checks[mascotaActual]) {
+            checks[mascotaActual].classList.add('visible');
+        }
+    } else {
+        textoActual.textContent = "Elige tu mascota";
+    }
+}
+
+// Función al seleccionar mascota
+function seleccionarMascota(mascota) {
+    mascotaActual = mascota;
+    localStorage.setItem('mascotaActual', mascota);
+    actualizarMenuMascota();
+    
+    // cerrar submenú
+    document.getElementById('submenu').classList.remove('visible');
+    
+    // recargar datos automáticamente al cambiar mascota
+    actualizar();
+}
+
+// mostrar submenú al hacer clic
+function toggleSubmenu() {
+    document.getElementById('submenu').classList.toggle('visible');
+}
+
+// Inicializar al cargar
+document.addEventListener('DOMContentLoaded', () => {
+    actualizarMenuMascota();
+});
+
+// ==================== ACTUALIZACIÓN DEL DASHBOARD ====================
+const btn = document.querySelector(".DashBoardBT");
+const tempEl = document.querySelectorAll(".card-value")[0];
+const humEl  = document.querySelectorAll(".card-value")[1];
+const nivEl  = document.querySelectorAll(".card-value")[2];
+const img    = document.getElementById("graficaImg");
+const msg    = document.querySelector("#graficaContainer p");
+const est    = document.querySelector("#estabilidadBox");
+
+async function actualizar() {
+    btn.disabled = true;
+    btn.textContent = "Cargando...";
+
+    // Construir URL con parámetro animal si hay uno seleccionado
+    let url = 'TU_PROPIA_URL/dashboard';
+    if (mascotaActual) {
+        url += `?animal=${encodeURIComponent(mascotaActual)}`;
+    }
+
+    try {
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'NOTAUSERAGENT',
+                'ngrok-skip-browser-warning': 'true'
+            }
+        });
+
+        const data = await res.json();
+
+        if (data.status !== "success") {
+            throw new Error(data.message || "Sin datos");
+        }
+
+        // Actualizar valores reales
+        tempEl.textContent = `${data.actual.temperatura}ºC`;
+        humEl.textContent  = `${data.actual.humedad}%`;
+        nivEl.textContent  = `${data.actual.nivel_agua}%`;
+        est.innerHTML = `Estabilidad de la temperatura<br><br>${data.actual.estabilidad}`;
+
+        // Mostrar gráfica con umbrales según la mascota
+        if (data.grafica_base64) {
+            img.src = data.grafica_base64;
+            img.style.display = "block";
+            msg.style.display = "none";
+        }
+
+        btn.textContent = "¡Actualizado!";
+        setTimeout(() => {
+            btn.textContent = "Actualizar";
+            btn.disabled = false;
+        }, 1200);
+
+    } catch (err) {
+        console.error(err);
+        tempEl.textContent = humEl.textContent = nivEl.textContent = "--";
+        msg.textContent = "Error de conexión o animal no encontrado";
+        msg.style.display = "block";
+        img.style.display = "none";
+        est.innerHTML = "Estabilidad de la temperatura<br><br>No disponible";
+        btn.textContent = "Reintentar";
+        btn.disabled = false;
+    }
+}
+
+// Ejecutar al cargar la página y al pulsar botón
+actualizar();
+btn.addEventListener("click", actualizar);
+</script>
+</body>
+</html>

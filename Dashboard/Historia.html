@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historia - TerraBoard</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .big-box {
+        width: 95%;
+        margin: 30px auto;
+        overflow-x: auto;
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        min-width: 900px;
+    }
+
+    th, td {
+        padding: 8px 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background: #f4f4f4;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    th.hora {
+        background: #e9e9e9;
+        position: sticky;
+        left: 0;
+        z-index: 11;
+    }
+
+    .fecha-col {
+        background: #f0f0f0;
+        font-weight: bold;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+        white-space: nowrap;
+    }
+
+    .valor-null {
+        color: #ccc;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 40px;
+        font-size: 18px;
+        color: #666;
+    }
+
+    .section-title {
+        margin: 50px 0 20px;
+        font-size: 24px;
+    }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div>
+        <div class="logo">TerraBoard v0.1</div>
+        <div class="menu">
+            <div class="menu-item" onclick="window.location.href='./Dashboard.html'">Dashboard</div>
+            <div class="menu-item active" onclick="window.location.href='./Historia.html'">Historia <span>›</span></div>
+            <div class="menu-item" onclick="window.location.href='./AprendeDeTuMascota.html'">Aprende de tu mascota</div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="content">
+    <h1>Reporte histórico comparativo</h1>
+    <button id="bt" class="HistoriaBT">Actualizar datos</button>
+
+    <div class="section-title">Temperatura (°C)</div>
+    <div class="big-box" id="tablaTemp">
+        <div class="loading">Cargando datos...</div>
+    </div>
+
+    <div class="section-title">Humedad (%)</div>
+    <div class="big-box" id="tablaHum">
+        <div class="loading">Cargando datos...</div>
+    </div>
+
+    <div class="section-title">Nivel de agua (%)</div>
+    <div class="big-box" id="tablaNivel">
+        <div class="loading">Cargando datos...</div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+async function cargarHistoria() {
+    const contenedores = {
+        temp: document.getElementById('tablaTemp'),
+        hum: document.getElementById('tablaHum'),
+        nivel: document.getElementById('tablaNivel')
+    };
+
+    Object.values(contenedores).forEach(c => {
+        c.innerHTML = '<div class="loading">Cargando último registro...</div>';
+    });
+
+    try {
+        const response = await fetch('TU_PROPIA_URL/promedios_por_minuto', {
+            headers: {
+                'User-Agent': 'NOTAUSERAGENT',
+                'ngrok-skip-browser-warning': 'true'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.status !== "success" || !result.ultimo_registro) {
+            throw new Error("No hay datos aún");
+        }
+
+        const d = result.ultimo_registro;
+
+        const htmlTemp = `
+            <div style="text-align:center; padding:40px; font-size:48px; color:#e74c3c;">
+                ${d.temperatura !== null ? d.temperatura + ' °C' : '—'}
+                <div style="font-size:18px; color:#aaa; margin-top:10px;">
+                    Última medición: ${d.fecha_hora} (${d.registros_en_minuto} lecturas)
+                </div>
+            </div>
+        `;
+
+        const htmlHum = `
+            <div style="text-align:center; padding:40px; font-size:48px; color:#3498db;">
+                ${d.humedad !== null ? d.humedad + ' %' : '—'}
+                <div style="font-size:18px; color:#aaa; margin-top:10px;">
+                    Última medición: ${d.fecha_hora}
+                </div>
+            </div>
+        `;
+
+        const htmlNivel = `
+            <div style="text-align:center; padding:40px; font-size:48px; color:#2ecc71;">
+                ${d.nivel_agua !== null ? d.nivel_agua + ' %' : '—'}
+                <div style="font-size:18px; color:#aaa; margin-top:10px;">
+                    Última medición: ${d.fecha_hora}
+                </div>
+            </div>
+        `;
+
+        contenedores.temp.innerHTML = htmlTemp;
+        contenedores.hum.innerHTML = htmlHum;
+        contenedores.nivel.innerHTML = htmlNivel;
+
+    } catch (err) {
+        Object.values(contenedores).forEach(c => {
+            c.innerHTML = `<div class="loading" style="color:#e74c3c;">
+                Sin datos aún<br><br>
+                <button onclick="cargarHistoria()" style="padding:10px 20px; font-size:16px;">Reintentar</button>
+            </div>`;
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', cargarHistoria);
+document.getElementById('bt').addEventListener('click', cargarHistoria);
+</script>
+</body>
+</html>

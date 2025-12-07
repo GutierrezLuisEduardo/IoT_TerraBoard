@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprende de tu mascota - TerraBoard</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    /* ---------------------- CONTENIDO ---------------------- */
+    h1 { font-size: 40px; margin: 0 0 20px 0; }
+
+    #titulo-principal {color:#ddd;}
+
+    /* Fondo dinámico del contenedor principal */
+    .content {
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        transition: background 0.5s ease-in-out;
+    }
+
+    /* Capa semitransparente con blur */
+    .content::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.35); /* Oscurece un poco para mejor legibilidad */
+        backdrop-filter: blur(8px);
+        z-index: 1;
+    }
+
+    /* Contenedor real del contenido */
+    .content-wrapper {
+        position: relative;
+        z-index: 2;
+        padding: 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .pet-image {
+        width: 330px;
+        height: 330px;
+        background: #e3e3e3;
+        border-radius: 15px;
+        object-fit: cover;
+        float: right;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .conditions-title { margin-top: 70px; font-size: 38px; }
+    .conditions-boxes { display: flex; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
+    .box {
+        width: 180px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .box-title { color: #ddd; margin-bottom: 10px; }
+    .box-value { font-size: 32px; font-weight: 600; color: white; }
+
+    .content-text { 
+        line-height: 1.8; 
+        font-size: 18px; 
+        color: white;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+
+    /* Fondo por defecto (cuando no hay mascota) */
+    .bg-default {
+        background-image: url('https://i.redd.it/5ghkd50attye1.gif');
+    }
+</style>
+</head>
+<body>
+
+<!-- ===================== SIDEBAR ===================== -->
+<div class="sidebar">
+    <div>
+        <div class="logo">TerraBoard v0.1</div>
+        <div class="menu">
+            <div class="menu-item" onclick="window.location.href='./Dashboard.html'">Dashboard</div>
+            <div class="menu-item" onclick="window.location.href='./Historia.html'">Historia <span>›</span></div>
+            <div class="menu-item" onclick="window.location.href='./AprendeDeTuMascota.html'">Aprende de tu mascota</div>
+        </div>
+        <div class="menu-item menuDesp" id="mDA">
+            <div class="menuDesp-trigger" onclick="toggleSubmenu()">
+                <span id="mascota-actual">Elige tu mascota</span>
+            </div>
+            <div class="submenu" id="submenu">
+                <div class="submenu-item" onclick="seleccionarMascota('Tarántula')">Tarántula  <span class="check" id="check-tarantula">•</span></div>
+                <div class="submenu-item" onclick="seleccionarMascota('Jerbo')">Jerbo  <span class="check" id="check-jerbo">•</span></div>
+                <div class="submenu-item" onclick="seleccionarMascota('Dragón Barbudo')">Dragón Barbudo  <span class="check" id="check-dragon">•</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== CONTENIDO ===================== -->
+<div class="content bg-default">
+    <div class="content-wrapper">
+        <h1 id="titulo-principal">Aprende de tu mascota</h1>
+
+        <img id="imagen-mascota" class="pet-image" src="" alt="Mascota" style="display:none;">
+
+        <div id="texto-mascota" class="content-text">
+            <p>Selecciona tu mascota del menú lateral para ver información específica sobre sus cuidados.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variable global
+let mascotaActual = localStorage.getItem('mascotaActual') || null;
+
+// Datos de cada mascota e imágenes correspondientes
+const infoMascotas = {
+    "Tarántula": {
+        titulo: "Aprende de tu tarántula",
+        imagen: "https://upload.wikimedia.org/wikipedia/commons/9/98/Brachypelma_smithi_2009_G03.jpg",
+        fondo: "https://es.gizmodo.com/app/uploads/2019/10/b8aq0wgfhv0xqoaxse5q.gif",
+        texto: `
+            <p>Las tarántulas son arácnidos tranquilos, longevos y no son tan demandantes en términos de cuidado.</p>
+            <p><strong>Condiciones ideales de terrario:</strong><br>
+            • Temperatura: 24–28 °C (nunca por debajo de 22 °C ni por encima de 30 °C)<br>
+            • Humedad relativa: 60–70%<br>
+            • Contar con materiales/sustrato para que pueda cavar y enterrarse<br>
+            • Contar con escondites y poca luz directa</p>
+            <p>No necesitan beber agua frecuentemente; basta con rociar ligeramente el terrario 1–2 veces por semana y mantener un pequeño recipiente con agua para las especies más grandes.</p>
+            <p>Alimentación: grillos, cucarachas o gusanos de la harina, una vez cada 7–14 días, pero no deben de alimentarse si están en muda (mudan su exoesqueleto)</p>
+            <p>Esperanza de vida: las hembras pueden vivir 20–30 años, machos entre 3-10 años</p>
+        `
+    },
+
+    "Jerbo": {
+        titulo: "Aprende de tu jerbo",
+        imagen: "https://images.unsplash.com/photo-1762115815924-b6d5f3ae05a1?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0",
+        fondo: "https://i.pinimg.com/originals/b3/e5/82/b3e5822c12918c9d088deb8e94ccb4fb.gif",
+        texto: `
+            <p>Los jerbos son pequeños roedores del desierto: muy activos, curiosos, y sociables. Necesitan de compañía.</p>
+            <p><strong>Condiciones ideales del terrario:</strong><br>
+            • Temperatura: 20–22 °C (muy sensibles al frío y al calor extremo)<br>
+            • Humedad relativa: 30–50 % (ambiente seco, como su hábitat natural)<br>
+            • Terrario de dimensiones amplias y con material para cavar y hacer túneles<br>
+            <p>Son estrictamente nocturnos: por la noche saltan y corren sin parar. Proporciónales baños de arena (no de agua) para mantener su pelaje perfecto.</p>
+            <p>Alimentación: mezcla específica para jerbos + heno constante + verdura fresca en pequeñas cantidades (evita frutas muy dulces).</p>
+            <p>Esperanza de vida: 3–5 años.</p>
+        `
+    },
+
+    "Dragón Barbudo": {
+        titulo: "Aprende de tu dragón barbudo",
+        imagen: "https://cdn0.expertoanimal.com/es/razas/0/6/3/dragon-barbudo_360_0_orig.jpg",
+        fondo: "https://i.redd.it/7rtb2p1d97w51.gif",
+        texto: `
+            <p>Los dragones barbudos son reptiles dóciles e inteligentes. No son tan demandantes en términos de cuidado. Pueden reconocer a su dueño.</p>
+            <p><strong>Condiciones ideales de terrario:</strong><br>
+            • Zona cálida: 35–40 °C<br>
+            • Zona fría: 24–28 °C<br>
+            • Humedad relativa: 30–40% importante monitorearla para evitar problemas respiratorios<br>
+            <p>Terrario mínimo recomendado: 120×60×60cm para un adulto. Necesitan ramas, rocas y escondites para trepar y regular su temperatura.</p>
+            <p>Alimentación: son omnívoros. Su dieta se basa principalmente en insectos y verdura, pero a menudo requieren complementos de calcio y vitaminas en polvo.</p>
+            <p>Esperanza de vida: 10–15 años con buenos cuidados.</p>
+        `
+    }
+};
+
+// Alternar menú
+function toggleSubmenu() {
+    document.getElementById('submenu').classList.toggle('visible');
+}
+
+// Seleccionar mascota
+function seleccionarMascota(mascota) {
+    mascotaActual = mascota;
+    localStorage.setItem('mascotaActual', mascota);
+
+    document.getElementById('mascota-actual').textContent = mascota;
+
+    document.querySelectorAll('.check').forEach(el => el.classList.remove('visible'));
+    const checkId = {'Tarántula': 'check-tarantula', 'Jerbo': 'check-jerbo', 'Dragón Barbudo': 'check-dragon'};
+    document.getElementById(checkId[mascota]).classList.add('visible');
+
+    // Cerrar submenú
+    document.getElementById('submenu').classList.remove('visible');
+
+    actualizarContenido();
+}
+
+// Actualizar todo el contenido y fondo
+function actualizarContenido() {
+    const contentDiv = document.querySelector('.content');
+    const wrapper = document.querySelector('.content-wrapper');
+    const titulo = document.getElementById('titulo-principal');
+    const imagen = document.getElementById('imagen-mascota');
+    const texto = document.getElementById('texto-mascota');
+
+    if (mascotaActual && infoMascotas[mascotaActual]) {
+        const info = infoMascotas[mascotaActual];
+
+        // Cambiar fondo
+        contentDiv.style.backgroundImage = `url('${info.fondo}')`;
+
+        // Actualizar contenido
+        titulo.textContent = info.titulo;
+        imagen.src = info.imagen;
+        imagen.style.display = 'block';
+        texto.innerHTML = info.texto;
+
+    } else {
+        // Estado por defecto
+        contentDiv.style.backgroundImage = "url('https://i.redd.it/5ghkd50attye1.gif')";
+        titulo.textContent = "Aprende de tu mascota";
+        imagen.style.display = 'none';
+        texto.innerHTML = "<p style='color:white; text-shadow: 0 1px 3px rgba(0,0,0,0.6);'>Selecciona tu mascota del menú lateral para ver información específica sobre sus cuidados.</p>";
+        document.getElementById('mascota-actual').textContent = "Elige tu mascota";
+    }
+}
+
+// Cargar estado guardado al iniciar
+window.onload = function() {
+    if (mascotaActual) {
+        document.getElementById('mascota-actual').textContent = mascotaActual;
+        const checkId = {'Tarántula': 'check-tarantula', 'Jerbo': 'check-jerbo', 'Dragón Barbudo': 'check-dragon'};
+        document.getElementById(checkId[mascotaActual]).classList.add('visible');
+    }
+    actualizarContenido();
+};
+</script>
+</body>
+</html>
