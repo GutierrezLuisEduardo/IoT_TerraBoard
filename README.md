@@ -13,10 +13,10 @@ TerraBoard es un **sistema de monitoreo en tiempo real de terrarios** para masco
 ---
 
 ## Arquitectura del sistema
-Un circuito compuesto por un microprocesador ``ESP32`-WROOM`, un sensor de temperatura y humedad relativa `DHT11`, y un sensor de nivel de agua `HW-038`. Complementado con un Dashboard que permite distintos tipos de visualización de cada variable.
+Un circuito compuesto por un microprocesador `ESP32-WROOM`, un sensor de temperatura y humedad relativa `DHT11`, y un sensor de nivel de agua `HW-038`. Complementado con un Dashboard que permite distintos tipos de visualización de cada variable.
 
 ### Su funcionamiento está definido por el siguiente esquema:
-- **`MySQL`, Base de datos 'iot_`ESP32`'**:
+- **`MySQL`, Base de datos 'iot_ESP32'**:
   Sus tablas permiten el acceso a los rangos de las condiciones ideales (temperatura y humedad máximas y mínimas) de cada animal, las últimas mediciones de circuito y finalmente al promedio de las mediciones tomadas durante el último minuto, a través de un evento definido para llevarse a cabo cada minuto.<br><br>
 
 - **Servidor `Flask` y túnel `ngrok`**:
@@ -39,13 +39,13 @@ Un circuito compuesto por un microprocesador ``ESP32`-WROOM`, un sensor de tempe
 |-|-|-|
 | Hardware | `ESP32`, `DHT11`, `HW-038` | Lectura de sensores |
 | Backend | `Flask` y `MySQL` | `API REST` y generación de gráficas |
-| Base de datos | `MySQL` (iot_`ESP32`) | Almacenamiento y promedios por minuto |
+| Base de datos | `MySQL` (iot_ESP32) | Almacenamiento y promedios por minuto |
 | Frontend | HTML, CSS, JS | Dashboard web |
 | Túnel seguro | `ngrok` | Exponer servidor local a internet |
 
 ---
 
-## Estructura de la base de datos `iot_`ESP32``
+## Estructura de la base de datos `iot_ESP32`
 
 `registro_ambiente`: Registros crudos cada ~6 segundos
 `promedios_por_minuto`: Promedio de cada minuto (calculado por EVENT)
@@ -142,13 +142,13 @@ Este proyecto sólo se ha probado bajo las siguientes condiciones:
   - `DHT11` (positivo: `3v3`, tierra: `GND`, señal: `GPIO 21`)
   - `HW-038` (positivo: `3v3`, tierra: `GND`, señal: `GPIO 34` por ser analógico)
 
-  **CONSIDERA QUE ESTAS CONFIGURACIONES FUERON IDEADAS PARA EL MODELO ESPECIFICADO DE `ESP32`, PUEDES CONSULTAR UN DATASHEET Y MODIFICAR LOS PINES EN EL CÓDIGO `Envia_BD_`ESP32`.ino` SI NECESITAS CAMBIOS.**  
+  **CONSIDERA QUE ESTAS CONFIGURACIONES FUERON IDEADAS PARA EL MODELO ESPECIFICADO DE `ESP32`, PUEDES CONSULTAR UN DATASHEET Y MODIFICAR LOS PINES EN EL CÓDIGO `Envia_BD_ESP32.ino` SI NECESITAS CAMBIOS.**  
 
 ### Puesta en marcha del servidor:
 1. Una vez que tengas instalado `ngrok`, ejecuta `ngrok http 5000` para exponer tu puerto 5000 y que se te asigne bajo "Forwarding" una URL tunel hacia tu servidor. Copia dicha URL.
 2. Detén la ejecución de `ngrok` (sólo queríamos conocer la URL).
-3. Añadir la URL asignada por `ngrok` a los siguientes archivos (busca dentro de cada archivo, con un editor de texto, el término "TU_PROPIA_URL" y sustitúyelo sin modificar el endpoint): `Dashboard.html`, `Historia.html`, `Envia_BD_`ESP32`.ino`.
-4. En el archivo `Envia_BD_`ESP32`.ino`, justo encima de la línea en la que ingresaste tu URL, se encuentran los campos de SSID y contraseña de red WiFI. Ingresa los tuyos.
+3. Añadir la URL asignada por `ngrok` a los siguientes archivos (busca dentro de cada archivo, con un editor de texto, el término "TU_PROPIA_URL" y sustitúyelo sin modificar el endpoint): `Dashboard.html`, `Historia.html`, `Envia_BD_ESP32.ino`.
+4. En el archivo `Envia_BD_ESP32.ino`, justo encima de la línea en la que ingresaste tu URL, se encuentran los campos de SSID y contraseña de red WiFI. Ingresa los tuyos.
 5. Añadir tu usuario y contraseña de MySQL en el archivo `server.py`, que por defecto expone el puerto 5000. **ASEGÚRATE DE QUE ESTÉ DISPONIBLE O SUSTITUYE POR UN PUERTO QUE SÍ LO ESTÉ**.
 6. Guarda los cambios en todos los archivos.
 7. Abrir el IDE `Arduino 2.3.6`, conectar el circuito y seleccionar la tarjeta y puerto correspondientes.
