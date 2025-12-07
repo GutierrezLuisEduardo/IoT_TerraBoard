@@ -163,3 +163,6 @@ Este proyecto sólo se ha probado bajo las siguientes condiciones:
 15. Finalmente activa el evento que calcula los promedios por minuto (Ya estaba declarado y existía, pero estaba desactivado): ejecuta `mysql -u TU_USUARIO_DE_MYSQL -p < ./activar.sql`
 16. IMPORTANTE: No esperes registro en el apartado de Historia ni visualización alguna si no ha transcurrido al menos un minuto. Dichas características del proyecto dependen de registros en `promedios_por_minuto`, y esta tabla sólo comenzará a llenarse al haber transcurrido al menos un minuto desde que activas el evento del paso 15.
 17. Si deseas reiniciar la prueba con una base de datos limpia, puedes ejecutar `mysql -u TU_USUARIO_DE_MYSQL -p < ./borrar.sql`
+
+# Video de presentación de TerraBoard
+<iframe width="1512" height="701" src="https://www.youtube.com/embed/VDgO564Jv5s" title="Presentación TerraBoard IoT" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
